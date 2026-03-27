@@ -212,6 +212,18 @@
       <div id="bStep4" class="hidden">
         <h3 class="b-title">بيانات الحجز والدفع</h3>
         <div id="bookingSummary" style="background:linear-gradient(135deg,rgba(201,168,76,.02),var(--bg-card));border-radius:14px;padding:16px;border:1px solid #1e1e1e;margin-bottom:20px"></div>
+
+        <div id="hairQuestionBox" class="hidden">
+          <div style="color:var(--gold-dark);font-size:13px;margin-bottom:10px;letter-spacing:2px;font-weight:700">
+            هل مشتري الشعر من عمار أو من الخارج؟
+          </div>
+          <div id="hairSourceList" style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px"></div>
+          <div style="color:#b8b8b8;font-size:13px;line-height:1.8;margin-bottom:20px;background:rgba(201,168,76,.05);border:1px solid rgba(201,168,76,.12);padding:12px 14px;border-radius:12px">
+            <strong style="color:var(--gold)">ملاحظة:</strong>
+            لا يوجد تعديل أو قص باروكات خارجية
+          </div>
+        </div>
+
         <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:22px">
           <input type="text" class="b-input" id="inpName" placeholder="الاسم الكامل" oninput="checkReady()">
           <input type="tel" class="b-input" id="inpPhone" placeholder="رقم الجوال (05XXXXXXXX)" oninput="checkReady()">
@@ -266,7 +278,13 @@ function scrollTo_(id) { document.getElementById(id).scrollIntoView({ behavior: 
 window.addEventListener('scroll', function() { document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 60); });
 
 var bStep = 0;
-var bData = { branch:'', branchName:'', service:'', serviceName:'', servicePrice:0, day:'', dayLabel:'', time:'', payment:'', paymentName:'', name:'', phone:'' };
+var bData = {
+  branch:'', branchName:'', service:'', serviceName:'', servicePrice:0,
+  hairSource:'', hairSourceName:'',
+  day:'', dayLabel:'', time:'',
+  payment:'', paymentName:'',
+  name:'', phone:''
+};
 var calYear, calMonth;
 var now = new Date(); calYear = now.getFullYear(); calMonth = now.getMonth();
 
@@ -277,6 +295,10 @@ var BRANCHES_DATA = [
 var SERVICES_DATA = [
   { id:'install', name:'تركيب شعر', price:1700, icon:'✦' },
   { id:'adhesive', name:'تغيير لاصق', price:150, icon:'◈' }
+];
+var HAIR_SOURCES = [
+  { id:'ammar', name:'من عمار', icon:'🏪' },
+  { id:'outside', name:'من الخارج', icon:'📦' }
 ];
 var PAYS = [
   { id:'cash', name:'ادفع بالمكان', icon:'💵', desc:'الدفع عند الوصول' },
@@ -310,7 +332,6 @@ async function saveBookingToSupabase(data) {
   return res.json();
 }
 
-/* التعديل الوحيد: جلب الأوقات المحجوزة لنفس اليوم فقط */
 async function getBookedTimes(date) {
   if (!date) return [];
 
@@ -404,7 +425,14 @@ function renderServices() {
     card.innerHTML = '<div style="width:52px;height:52px;border-radius:14px;background:rgba(201,168,76,.07);display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--gold);border:1px solid rgba(201,168,76,.13);font-weight:700;flex-shrink:0">' + s.icon + '</div>' +
       '<div style="flex:1;font-size:17px;font-weight:700">' + s.name + '</div>' +
       '<div style="background:rgba(201,168,76,.07);padding:8px 16px;border-radius:10px;border:1px solid rgba(201,168,76,.13)"><span style="color:var(--gold);font-size:20px;font-weight:800">' + s.price + '</span><span style="color:var(--gold-dark);font-size:12px"> ريال</span></div>';
-    card.onclick = function() { bData.service = s.id; bData.serviceName = s.name; bData.servicePrice = s.price; transitionTo(2); };
+    card.onclick = function() {
+      bData.service = s.id;
+      bData.serviceName = s.name;
+      bData.servicePrice = s.price;
+      bData.hairSource = '';
+      bData.hairSourceName = '';
+      transitionTo(2);
+    };
     el.appendChild(card);
   });
 }
@@ -512,6 +540,7 @@ async function renderTimes() {
         renderTimes();
         setTimeout(function() {
           renderSummary();
+          renderHairSources();
           renderPayments();
           renderInstallment();
           transitionTo(4);
@@ -527,11 +556,66 @@ async function renderTimes() {
   }
 }
 
+function updateServicePriceByHairSource() {
+  if (bData.service === 'adhesive') {
+    if (bData.hairSource === 'outside') {
+      bData.servicePrice = 200;
+    } else {
+      bData.servicePrice = 150;
+    }
+  } else if (bData.service === 'install') {
+    bData.servicePrice = 1700;
+  }
+}
+
 function renderSummary() {
+  var extraRow = '';
+
+  if (bData.service === 'adhesive') {
+    extraRow = '<div style="margin-bottom:6px"><span style="color:var(--dim);font-size:12px">💇 ' + (bData.hairSourceName || 'لم يتم التحديد بعد') + '</span></div>';
+  }
+
   document.getElementById('bookingSummary').innerHTML =
     '<div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="color:var(--dim);font-size:12px">📍 ' + bData.branchName + '</span><span style="color:var(--dim);font-size:12px">🕐 ' + bData.time + '</span></div>' +
     '<div style="margin-bottom:6px"><span style="color:var(--dim);font-size:12px">📅 ' + bData.dayLabel + '</span></div>' +
+    extraRow +
     '<div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:15px;font-weight:600">' + bData.serviceName + '</span><span style="color:var(--gold);font-size:20px;font-weight:800">' + bData.servicePrice + ' <span style="font-size:12px;color:var(--gold-dark)">ريال</span></span></div>';
+}
+
+function renderHairSources() {
+  var box = document.getElementById('hairQuestionBox');
+  var l = document.getElementById('hairSourceList');
+
+  if (bData.service !== 'adhesive') {
+    box.classList.add('hidden');
+    l.innerHTML = '';
+    return;
+  }
+
+  box.classList.remove('hidden');
+  l.innerHTML = '';
+
+  HAIR_SOURCES.forEach(function(c) {
+    var card = document.createElement('div');
+    card.className = 'b-card' + (bData.hairSource === c.id ? ' sel' : '');
+    card.style.cssText = 'display:flex;align-items:center;gap:12px;padding:16px 18px';
+    card.innerHTML =
+      '<span style="font-size:22px">' + c.icon + '</span>' +
+      '<div style="flex:1"><div style="font-size:15px;font-weight:700;color:' + (bData.hairSource === c.id ? 'var(--gold)' : 'var(--text)') + '">' + c.name + '</div></div>' +
+      (bData.hairSource === c.id ? '<div style="color:var(--gold);font-size:16px">✓</div>' : '');
+
+    card.onclick = function() {
+      bData.hairSource = c.id;
+      bData.hairSourceName = c.name;
+      updateServicePriceByHairSource();
+      renderHairSources();
+      renderSummary();
+      renderInstallment();
+      checkReady();
+    };
+
+    l.appendChild(card);
+  });
 }
 
 function renderPayments() {
@@ -564,13 +648,24 @@ function renderInstallment() {
 function checkReady() {
   var n = document.getElementById('inpName').value.trim();
   var p = document.getElementById('inpPhone').value.trim();
-  document.getElementById('confirmBtn').disabled = !(bData.payment && n && p);
+
+  var hairReady = true;
+  if (bData.service === 'adhesive') {
+    hairReady = !!bData.hairSource;
+  }
+
+  document.getElementById('confirmBtn').disabled = !(hairReady && bData.payment && n && p);
 }
 
 async function confirmBooking() {
   var btn = document.getElementById('confirmBtn');
   bData.name = document.getElementById('inpName').value.trim();
   bData.phone = document.getElementById('inpPhone').value.trim();
+
+  if (bData.service === 'adhesive' && !bData.hairSource) {
+    alert('حدد هل مشتري الشعر من عمار أو من الخارج');
+    return;
+  }
 
   if (!bData.name || !bData.phone || !bData.payment) {
     alert('كمّل البيانات أولًا');
@@ -598,6 +693,7 @@ async function confirmBooking() {
     await saveBookingToSupabase({
       customer_name: bData.name,
       customer_phone: bData.phone,
+      hair_source: bData.hairSourceName || null,
       branch: bData.branchName,
       service: bData.serviceName,
       price: bData.servicePrice,
@@ -612,18 +708,28 @@ async function confirmBooking() {
     c.classList.remove('fade-in'); c.classList.add('fade-out');
     setTimeout(function() {
       for (var i = 0; i <= 4; i++) document.getElementById('bStep' + i).classList.add('hidden');
+
       var items = [
         { l:'الفرع', v:bData.branchName, ic:'📍' },
-        { l:'الخدمة', v:bData.serviceName + ' - ' + bData.servicePrice + ' ريال', ic:'💇' },
+        { l:'الخدمة', v:bData.serviceName + ' - ' + bData.servicePrice + ' ريال', ic:'💇' }
+      ];
+
+      if (bData.service === 'adhesive') {
+        items.push({ l:'مصدر شراء الشعر', v:bData.hairSourceName, ic:'🛍️' });
+      }
+
+      items = items.concat([
         { l:'التاريخ', v:bData.dayLabel, ic:'📅' },
         { l:'الوقت', v:bData.time, ic:'🕐' },
         { l:'الدفع', v:bData.paymentName, ic:'💳' },
         { l:'الاسم', v:bData.name, ic:'👤' },
         { l:'الجوال', v:bData.phone, ic:'📱' }
-      ];
+      ]);
+
       document.getElementById('confirmDetails').innerHTML = items.map(function(it, i) {
         return '<div style="display:flex;justify-content:space-between;padding:10px 0;' + (i < items.length - 1 ? 'border-bottom:1px solid #1e1e1e' : '') + '"><span style="color:var(--dim);font-size:13px">' + it.ic + ' ' + it.l + '</span><span style="font-size:14px;font-weight:600">' + it.v + '</span></div>';
       }).join('');
+
       document.getElementById('bConfirm').classList.remove('hidden');
       renderSteps();
       c.classList.remove('fade-out'); c.classList.add('fade-in');
@@ -638,12 +744,23 @@ async function confirmBooking() {
 }
 
 function sendWhatsApp() {
-  var msg = 'مرحباً، أود تأكيد حجزي:\n📍 الفرع: ' + bData.branchName + '\n💇 الخدمة: ' + bData.serviceName + ' - ' + bData.servicePrice + ' ريال\n📅 التاريخ: ' + bData.dayLabel + '\n🕐 الوقت: ' + bData.time + '\n💳 الدفع: ' + bData.paymentName + '\n👤 الاسم: ' + bData.name + '\n📱 الجوال: ' + bData.phone;
+  var hairLine = '';
+  if (bData.service === 'adhesive') {
+    hairLine = '\n🛍️ مصدر شراء الشعر: ' + bData.hairSourceName;
+  }
+
+  var msg = 'مرحباً، أود تأكيد حجزي:\n📍 الفرع: ' + bData.branchName + '\n💇 الخدمة: ' + bData.serviceName + ' - ' + bData.servicePrice + ' ريال' + hairLine + '\n📅 التاريخ: ' + bData.dayLabel + '\n🕐 الوقت: ' + bData.time + '\n💳 الدفع: ' + bData.paymentName + '\n👤 الاسم: ' + bData.name + '\n📱 الجوال: ' + bData.phone;
   window.open('https://wa.me/966566626652?text=' + encodeURIComponent(msg), '_blank');
 }
 
 function resetBooking() {
-  bData = { branch:'', branchName:'', service:'', serviceName:'', servicePrice:0, day:'', dayLabel:'', time:'', payment:'', paymentName:'', name:'', phone:'' };
+  bData = {
+    branch:'', branchName:'', service:'', serviceName:'', servicePrice:0,
+    hairSource:'', hairSourceName:'',
+    day:'', dayLabel:'', time:'',
+    payment:'', paymentName:'',
+    name:'', phone:''
+  };
   document.getElementById('inpName').value = '';
   document.getElementById('inpPhone').value = '';
   document.getElementById('confirmBtn').disabled = true;
@@ -655,6 +772,7 @@ renderSteps();
 renderBranches();
 renderServices();
 renderCalendar();
+renderHairSources();
 renderPayments();
 </script>
 </body>
