@@ -310,6 +310,7 @@ function supaHeaders() {
     apikey: SUPABASE_KEY,
     Authorization: `Bearer ${SUPABASE_KEY}`,
     "Content-Type": "application/json",
+    "Accept": "application/json",
     Prefer: "return=representation"
   };
 }
@@ -397,27 +398,33 @@ async function upsertCustomerFromBooking(payload) {
 async function getBookedTimes(date) {
   if (!date) return [];
 
-  const url = `${SUPABASE_URL}/rest/v1/bookings?select=booking_time,status&booking_date=eq.${encodeURIComponent(date)}`;
-  const res = await fetch(url, {
-    method: "GET",
-    headers: supaHeaders()
-  });
+  try {
+    const url = `${SUPABASE_URL}/rest/v1/bookings?select=booking_time,status&booking_date=eq.${date}`;
+    const res = await fetch(url, {
+      method: "GET",
+      headers: supaHeaders()
+    });
 
-  if (!res.ok) {
-    console.error('getBookedTimes error:', await res.text());
+    if (!res.ok) {
+      const errText = await res.text();
+      console.error("getBookedTimes error:", errText);
+      return [];
+    }
+
+    const data = await res.json();
+
+    return data
+      .filter(function(row) {
+        return !row.status || row.status !== 'cancelled';
+      })
+      .map(function(row) {
+        return String(row.booking_time || '').trim();
+      })
+      .filter(Boolean);
+  } catch (e) {
+    console.error("Fetch failed in getBookedTimes:", e);
     return [];
   }
-
-  const data = await res.json();
-
-  return data
-    .filter(function(row) {
-      return !row.status || row.status !== 'cancelled';
-    })
-    .map(function(row) {
-      return String(row.booking_time || '').trim();
-    })
-    .filter(Boolean);
 }
 
 function genTimes() {
@@ -581,41 +588,46 @@ async function renderTimes() {
   var g = document.getElementById('timeGrid');
   g.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--dim)">جاري تحميل الأوقات...</div>';
 
-  const bookedTimes = await getBookedTimes(bData.day);
+  try {
+    const bookedTimes = await getBookedTimes(bData.day);
 
-  g.innerHTML = '';
+    g.innerHTML = '';
 
-  TIMES.forEach(function(t) {
-    var normalizedTime = String(t).trim();
+    TIMES.forEach(function(t) {
+      var normalizedTime = String(t).trim();
 
-    if (bookedTimes.includes(normalizedTime)) return;
+      if (bookedTimes.includes(normalizedTime)) return;
 
-    var card = document.createElement('div');
-    card.className = 'b-card' + (bData.time === t ? ' sel' : '');
-    card.style.textAlign = 'center';
-    card.style.padding = '14px 8px';
-    var col = bData.time === t ? 'var(--gold)' : 'var(--text)';
-    card.innerHTML = '<div style="font-size:14px;font-weight:600;color:' + col + '">' + t + '</div>';
+      var card = document.createElement('div');
+      card.className = 'b-card' + (bData.time === t ? ' sel' : '');
+      card.style.textAlign = 'center';
+      card.style.padding = '14px 8px';
+      var col = bData.time === t ? 'var(--gold)' : 'var(--text)';
+      card.innerHTML = '<div style="font-size:14px;font-weight:600;color:' + col + '">' + t + '</div>';
 
-    (function(time) {
-      card.onclick = function() {
-        bData.time = time;
-        renderTimes();
-        setTimeout(function() {
-          renderSummary();
-          renderAdhesiveSources();
-          renderPayments();
-          renderInstallment();
-          transitionTo(4);
-        }, 200);
-      };
-    })(t);
+      (function(time) {
+        card.onclick = function() {
+          bData.time = time;
+          renderTimes();
+          setTimeout(function() {
+            renderSummary();
+            renderAdhesiveSources();
+            renderPayments();
+            renderInstallment();
+            transitionTo(4);
+          }, 200);
+        };
+      })(t);
 
-    g.appendChild(card);
-  });
+      g.appendChild(card);
+    });
 
-  if (g.innerHTML === '') {
-    g.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:#888">لا يوجد مواعيد متاحة في هذا اليوم</div>';
+    if (g.innerHTML === '') {
+      g.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:#888">لا يوجد مواعيد متاحة في هذا اليوم</div>';
+    }
+  } catch (e) {
+    console.error("renderTimes error:", e);
+    g.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:#f87171">تعذر تحميل الأوقات حالياً</div>';
   }
 }
 
