@@ -265,8 +265,8 @@
 </div></footer>
 
 <script>
-const SUPABASE_URL = "https://vmbaxqghabxzvkcxwjdy.supabase.co";
-const SUPABASE_KEY = "sb_publishable_5maKs94zmK6Iu5TbpiHkWw_SM0Ew2Y2";
+const SUPABASE_URL = "https://vmbaxqghabxzvkcwxjdy.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZtYmF4cWdoYWJ4enZrY3h3amR5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxODI3NzQsImV4cCI6MjA4OTc1ODc3NH0.HGpFOtSqhhrn-kNQZU0IDVY7j6lzMkSNL2Z8_fLRbSY";
 
 var menuOpen = false;
 function toggleMenu() { menuOpen = !menuOpen; document.getElementById('mobileMenu').classList.toggle('open', menuOpen); }
@@ -335,6 +335,64 @@ async function saveBookingToSupabase(data) {
     return text;
   }
 }
+
+function makeReferralCode(phone){
+  const last4 = String(phone || "").slice(-4);
+  const rand = Math.random().toString(36).slice(2,5).toUpperCase();
+  return last4 + rand;
+}
+
+async function upsertCustomerFromBooking(payload) {
+  const checkRes = await fetch(`${SUPABASE_URL}/rest/v1/customers?select=id,name,phone,branch&phone=eq.${encodeURIComponent(payload.customer_phone)}&limit=1`, {
+    method: "GET",
+    headers: supaHeaders()
+  });
+
+  if (!checkRes.ok) {
+    throw new Error(await checkRes.text() || "Customer lookup failed");
+  }
+
+  const existing = await checkRes.json();
+
+  if (existing && existing.length) {
+    const row = existing[0];
+    const updateRes = await fetch(`${SUPABASE_URL}/rest/v1/customers?id=eq.${row.id}`, {
+      method: "PATCH",
+      headers: supaHeaders(),
+      body: JSON.stringify({
+        name: row.name || payload.customer_name,
+        branch: payload.branch || row.branch || "riyadh",
+        updated_at: new Date().toISOString()
+      })
+    });
+
+    if (!updateRes.ok) {
+      throw new Error(await updateRes.text() || "Customer update failed");
+    }
+  } else {
+    const insertRes = await fetch(`${SUPABASE_URL}/rest/v1/customers`, {
+      method: "POST",
+      headers: supaHeaders(),
+      body: JSON.stringify([{
+        name: payload.customer_name,
+        phone: payload.customer_phone,
+        birthday: null,
+        branch: payload.branch || "riyadh",
+        stamps: [false,false,false,false,false],
+        total_rewards: 0,
+        history: [],
+        referral_code: makeReferralCode(payload.customer_phone),
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      }])
+    });
+
+    if (!insertRes.ok) {
+      throw new Error(await insertRes.text() || "Customer insert failed");
+    }
+  }
+}
+
 
 async function getBookedTimes(date) {
   if (!date) return [];
@@ -711,6 +769,7 @@ async function confirmBooking() {
 
     console.log("Saving booking payload:", payload);
     await saveBookingToSupabase(payload);
+    await upsertCustomerFromBooking(payload);
 
     var c = document.getElementById('bContent');
     c.classList.remove('fade-in'); c.classList.add('fade-out');
