@@ -319,7 +319,7 @@ async function saveBookingToSupabase(data) {
   const res = await fetch(`${SUPABASE_URL}/rest/v1/bookings`, {
     method: "POST",
     headers: supaHeaders(),
-    body: JSON.stringify(data)
+    body: JSON.stringify([data])
   });
 
   const text = await res.text();
@@ -327,7 +327,7 @@ async function saveBookingToSupabase(data) {
   console.log("Supabase response:", text);
 
   if (!res.ok) {
-    throw new Error(text || "Supabase insert failed");
+    throw new Error(`Supabase ${res.status}: ${text || "Supabase insert failed"}`);
   }
 
   try {
@@ -769,7 +769,7 @@ async function confirmBooking() {
       customer_name: bData.name,
       customer_phone: bData.phone,
       adhesive_source: bData.adhesiveSourceName || null,
-      branch: bData.branchName,
+      branch: bData.branch,
       service: bData.serviceName,
       price: Number(bData.servicePrice),
       booking_date: bData.day,
@@ -813,7 +813,7 @@ async function confirmBooking() {
       btn.textContent = 'تأكيد الحجز';
     }, 250);
   } catch (error) {
-    console.error("Booking error:", error);
+    console.error("Booking error full:", error);
     alert('فشل حفظ الحجز:\n' + (error.message || 'حصلت مشكلة غير معروفة'));
     btn.disabled = false;
     btn.textContent = 'تأكيد الحجز';
