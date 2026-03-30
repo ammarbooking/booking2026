@@ -1,856 +1,90 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>إبداع عمار - الحجز</title>
-  <meta name="description" content="إبداع عمار - متخصصون في تركيب الشعر المستعار للرجال في الرياض والدمام">
-  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
-  <style>
-    :root{--gold:#C9A84C;--gold-light:#E8D48B;--gold-dark:#A07B2E;--bg:#070707;--bg2:#0E0E0E;--bg-card:#131313;--bg-card2:#1A1A1A;--text:#E8E8E8;--dim:#888}
-    *{box-sizing:border-box;margin:0;padding:0}
-    html{scroll-behavior:smooth;scroll-padding-top:100px;background:var(--bg)}
-    body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);direction:rtl;overflow-x:hidden}
-    ::-webkit-scrollbar{width:6px}
-    ::-webkit-scrollbar-thumb{background:rgba(201,168,76,0.3);border-radius:3px}
-    a{text-decoration:none}
-    input:focus{border-color:var(--gold)!important;outline:none}
-    button{font-family:'Tajawal',sans-serif}
-    .hidden{display:none!important}
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>الحجز - إبداع عمار</title>
 
-    .marquee-bar{background:linear-gradient(90deg,var(--gold-dark),var(--gold),var(--gold-dark));overflow:hidden;white-space:nowrap;padding:10px 0;position:fixed;top:0;left:0;right:0;z-index:1000}
-    .marquee-inner{display:inline-block;animation:marquee 30s linear infinite;color:var(--bg);font-weight:700;font-size:13px;letter-spacing:1px}
-    .marquee-inner span{margin:0 50px}
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
-    .navbar{position:fixed;top:36px;left:0;right:0;z-index:999;transition:all .4s;padding:0 24px}
-    .navbar.scrolled{background:rgba(7,7,7,.95);backdrop-filter:blur(20px);border-bottom:1px solid rgba(201,168,76,.08)}
-    .nav-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:64px}
-    .nav-logo{font-size:24px;font-weight:900;background:linear-gradient(135deg,var(--gold-dark),var(--gold),var(--gold-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent;cursor:pointer}
-    .nav-links{display:flex;gap:32px}
-    .nav-links a{color:#aaa;font-size:14px;font-weight:600;cursor:pointer;padding-bottom:4px;border-bottom:2px solid transparent;transition:all .3s}
-    .nav-links a:hover{color:var(--gold);border-bottom-color:var(--gold)}
-    .nav-toggle{display:none;cursor:pointer;padding:8px;flex-direction:column;gap:6px}
-    .nav-toggle span{width:24px;height:2px;background:var(--gold);display:block}
-    .nav-mobile-menu{display:none;background:rgba(7,7,7,.98);padding:20px;border-top:1px solid rgba(201,168,76,.1)}
-    .nav-mobile-menu.open{display:block}
-    .nav-mobile-menu a{display:block;color:#aaa;font-size:16px;font-weight:600;padding:14px 0;border-bottom:1px solid #1a1a1a;cursor:pointer}
-    @media(max-width:768px){.nav-links{display:none!important}.nav-toggle{display:flex!important}}
-
-    .hero{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:120px 24px 80px;position:relative;overflow:hidden;background:radial-gradient(ellipse at 50% 30%,rgba(201,168,76,.03) 0%,transparent 50%),var(--bg)}
-    .hero-circle{position:absolute;top:15%;left:5%;width:200px;height:200px;border:1px solid rgba(201,168,76,.06);border-radius:50%;animation:float 8s ease-in-out infinite}
-    .hero-square{position:absolute;bottom:20%;right:8%;width:150px;height:150px;border:1px solid rgba(201,168,76,.04);transform:rotate(45deg);animation:float 10s ease-in-out infinite reverse}
-    .hero-content{position:relative;z-index:1;max-width:700px}
-    .hero-title{font-size:clamp(40px,8vw,72px);font-weight:900;line-height:1.1;margin:0 0 8px;background:linear-gradient(135deg,var(--gold-dark),var(--gold),var(--gold-light),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:fadeUp 1s ease-out}
-    .btn-gold{background:linear-gradient(135deg,var(--gold-dark),var(--gold),var(--gold-light));color:var(--bg);border:none;border-radius:14px;padding:18px 44px;font-size:17px;font-weight:800;cursor:pointer;letter-spacing:1px;box-shadow:0 8px 32px rgba(201,168,76,.2);transition:all .3s;font-family:'Tajawal',sans-serif}
-    .btn-gold:hover{transform:translateY(-2px)}
-    .btn-outline{background:transparent;color:var(--gold);border:2px solid rgba(201,168,76,.27);border-radius:14px;padding:16px 36px;font-size:17px;font-weight:700;display:inline-flex;align-items:center;gap:8px;transition:all .3s}
-
-    .section{padding:100px 24px}
-    .section-dark{background:var(--bg)}
-    .section-alt{background:var(--bg2)}
-    .section-inner{max-width:900px;margin:0 auto}
-    .section-label{color:var(--gold);font-size:13px;letter-spacing:4px;font-weight:600;margin-bottom:12px;text-align:center}
-    .section-title{color:var(--text);font-size:clamp(26px,5vw,38px);font-weight:800;text-align:center;line-height:1.3;margin-bottom:10px}
-    .gold-divider{display:flex;align-items:center;justify-content:center;gap:14px;margin:30px auto;max-width:220px}
-    .gold-divider .line-r{flex:1;height:1px;background:linear-gradient(to right,transparent,var(--gold))}
-    .gold-divider .line-l{flex:1;height:1px;background:linear-gradient(to left,transparent,var(--gold))}
-    .gold-divider .dia{color:var(--gold);font-size:12px;opacity:.7}
-    .features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:24px}
-    .feature-card{background:var(--bg-card);border-radius:20px;padding:36px 28px;border:1px solid #1a1a1a;text-align:center;transition:all .4s}
-    .feature-card:hover{border-color:rgba(201,168,76,.2);transform:translateY(-4px)}
-    .services-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px}
-    .service-card{background:var(--bg-card);border-radius:24px;padding:40px 32px;border:1px solid #1a1a1a;position:relative;overflow:hidden;transition:all .4s;cursor:pointer}
-    .service-card:hover{border-color:rgba(201,168,76,.2);transform:translateY(-4px)}
-    .reviews-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
-    .review-card{background:var(--bg-card);border-radius:20px;padding:32px 28px;border:1px solid #1a1a1a}
-
-    .booking-section{padding:100px 24px;background:radial-gradient(ellipse at 50% 0%,rgba(201,168,76,.02) 0%,transparent 50%),var(--bg)}
-    .booking-wrap{max-width:500px;margin:0 auto}
-    .b-steps{display:flex;justify-content:center;gap:8px;margin-bottom:28px}
-    .b-dot{height:10px;border-radius:5px;transition:all .4s}
-    .b-card{background:var(--bg-card);border-radius:16px;padding:20px;border:1px solid #1e1e1e;cursor:pointer;transition:all .3s}
-    .b-card:hover{border-color:rgba(201,168,76,.2)}
-    .b-card.sel{background:#1C1810;border:2px solid var(--gold);box-shadow:0 0 24px rgba(201,168,76,.13)}
-    .b-title{color:var(--text);text-align:center;font-size:20px;font-weight:700;margin-bottom:20px}
-    .b-input{width:100%;padding:14px 18px;background:var(--bg-card2);border:1px solid #2a2a2a;border-radius:12px;color:#fff;font-size:16px;direction:rtl;font-family:'Tajawal',sans-serif;transition:border-color .3s;box-sizing:border-box}
-    .b-input::placeholder{color:#555}
-    .btn-back{background:transparent;color:var(--gold);border:1px solid rgba(201,168,76,.2);border-radius:12px;padding:10px 28px;font-size:14px;cursor:pointer;font-family:'Tajawal',sans-serif}
-    .btn-confirm{background:linear-gradient(135deg,var(--gold-dark),var(--gold),var(--gold-light));color:var(--bg);border:none;border-radius:12px;padding:16px 40px;font-size:17px;font-weight:800;cursor:pointer;width:100%;max-width:300px;font-family:'Tajawal',sans-serif}
-    .btn-confirm:disabled{opacity:.4;cursor:not-allowed}
-    .btn-wa{background:#25D366;color:#fff;border:none;border-radius:12px;padding:16px 40px;font-size:16px;font-weight:800;cursor:pointer;width:100%;max-width:300px;display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:'Tajawal',sans-serif}
-    .b-step-content{transition:all .25s}
-    .b-step-content.fade-out{opacity:0;transform:translateY(16px)}
-    .b-step-content.fade-in{opacity:1;transform:translateY(0)}
-
-    .cal-nav-btn{background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.2);color:var(--gold);width:42px;height:42px;border-radius:12px;cursor:pointer;font-size:20px;font-family:'Tajawal',sans-serif;transition:all .3s}
-    .cal-nav-btn:hover{background:rgba(201,168,76,.2)}
-    .cal-day-header{font-size:12px;font-weight:700;padding:8px 0;text-align:center}
-    .cal-cell{height:46px;display:flex;align-items:center;justify-content:center;border-radius:12px;font-size:15px;font-weight:700;transition:all .2s}
-    .cal-cell.clickable{cursor:pointer}
-    .cal-cell.clickable:hover{border-color:rgba(201,168,76,.4)!important}
-    .cal-cell.today{background:rgba(201,168,76,.12);color:var(--gold);border:1px solid rgba(201,168,76,.3)}
-    .cal-cell.selected{background:var(--gold);color:var(--bg);box-shadow:0 0 16px rgba(201,168,76,.3)}
-    .cal-cell.past{color:#2a2a2a}
-    .cal-cell.normal{background:var(--bg-card);color:var(--text);border:1px solid #1e1e1e}
-
-    .footer{background:var(--bg-card);border-top:1px solid rgba(201,168,76,.06);padding:60px 24px 30px;text-align:center}
-
-    @keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
-    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-20px)}}
-    @keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
-    @keyframes checkPop{0%{transform:scale(0)}50%{transform:scale(1.2)}100%{transform:scale(1)}}
-  </style>
+<style>
+body {background:#0b0b0b;color:#fff;font-family:sans-serif;text-align:center;padding:40px}
+button{padding:12px 20px;margin:10px;border-radius:8px;border:none;background:#c9a84c;color:#000;font-weight:bold;cursor:pointer}
+input{padding:10px;margin:10px;border-radius:6px;border:none;width:200px}
+</style>
 </head>
+
 <body>
 
-<div class="marquee-bar"><div class="marquee-inner">
-  <span>🔥 عرض خاص: تركيب شعر مستعار بأحدث التقنيات</span><span>✨ خصم 10% على أول زيارة</span><span>⭐ إبداع عمار - الأول في تركيب الشعر المستعار</span><span>🎁 احجز الآن واحصل على استشارة مجانية</span><span>💈 فروعنا في الرياض والدمام لخدمتكم</span>
-  <span>🔥 عرض خاص: تركيب شعر مستعار بأحدث التقنيات</span><span>✨ خصم 10% على أول زيارة</span><span>⭐ إبداع عمار - الأول في تركيب الشعر المستعار</span><span>🎁 احجز الآن واحصل على استشارة مجانية</span><span>💈 فروعنا في الرياض والدمام لخدمتكم</span>
-</div></div>
+<h2>احجز الآن</h2>
 
-<nav class="navbar" id="navbar">
-  <div class="nav-inner">
-    <div class="nav-logo" onclick="scrollTo_('hero')">إبداع عمار</div>
-    <div class="nav-links"><a onclick="scrollTo_('hero')">الرئيسية</a><a onclick="scrollTo_('about')">من نحن</a><a onclick="scrollTo_('services')">خدماتنا</a><a onclick="scrollTo_('booking')">احجز موعدك</a><a onclick="scrollTo_('reviews')">آراء العملاء</a></div>
-    <div class="nav-toggle" onclick="toggleMenu()"><span></span><span></span><span></span></div>
-  </div>
-  <div class="nav-mobile-menu" id="mobileMenu">
-    <a onclick="scrollTo_('hero');closeMenu()">الرئيسية</a><a onclick="scrollTo_('about');closeMenu()">من نحن</a><a onclick="scrollTo_('services');closeMenu()">خدماتنا</a><a onclick="scrollTo_('booking');closeMenu()">احجز موعدك</a><a onclick="scrollTo_('reviews');closeMenu()">آراء العملاء</a>
-  </div>
-</nav>
+<input id="name" placeholder="اسمك">
+<input id="phone" placeholder="رقمك">
 
-<section class="hero" id="hero">
-  <div class="hero-circle"></div><div class="hero-square"></div>
-  <div class="hero-content">
-    <div style="font-size:14px;color:var(--gold);letter-spacing:6px;font-weight:600;margin-bottom:20px;animation:fadeUp 1s ease-out">ABDA3 AMMAR</div>
-    <h1 class="hero-title">إبداع عمار</h1>
-    <p style="font-size:clamp(16px,3vw,22px);color:var(--gold-dark);font-weight:300;letter-spacing:4px;margin:0 0 30px;animation:fadeUp 1s .1s both">لتركيب الشعر المستعار</p>
-    <p style="color:var(--dim);font-size:17px;line-height:1.8;max-width:500px;margin:0 auto 40px;animation:fadeUp 1s .3s both">نُعيد لك ثقتك بنفسك مع أحدث تقنيات تركيب الشعر المستعار الطبيعي للرجال</p>
-    <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;animation:fadeUp 1s .5s both">
-      <button class="btn-gold" onclick="scrollTo_('booking')">احجز موعدك الآن</button>
-      <a href="https://wa.me/966566626652" target="_blank" class="btn-outline">💬 تواصل معنا</a>
-    </div>
-  </div>
-</section>
+<br>
 
-<section class="section section-alt" id="about"><div class="section-inner">
-  <div class="section-label">من نحن</div><h2 class="section-title">الريادة في تركيب الشعر المستعار</h2>
-  <div class="gold-divider"><div class="line-r"></div><div class="dia">◆</div><div class="line-l"></div></div>
-  <div class="features-grid">
-    <div class="feature-card"><div style="font-size:40px;margin-bottom:16px">🏆</div><h3 style="color:var(--gold);font-size:17px;font-weight:700;margin-bottom:10px">خبرة +10 سنوات</h3><p style="color:var(--dim);font-size:14px;line-height:1.7">خبرة طويلة في مجال تركيب الشعر المستعار</p></div>
-    <div class="feature-card"><div style="font-size:40px;margin-bottom:16px">🔬</div><h3 style="color:var(--gold);font-size:17px;font-weight:700;margin-bottom:10px">تقنيات حديثة</h3><p style="color:var(--dim);font-size:14px;line-height:1.7">نستخدم أحدث التقنيات العالمية في التركيب</p></div>
-    <div class="feature-card"><div style="font-size:40px;margin-bottom:16px">💎</div><h3 style="color:var(--gold);font-size:17px;font-weight:700;margin-bottom:10px">شعر طبيعي 100%</h3><p style="color:var(--dim);font-size:14px;line-height:1.7">نستخدم شعر طبيعي بجودة عالية</p></div>
-    <div class="feature-card"><div style="font-size:40px;margin-bottom:16px">🤝</div><h3 style="color:var(--gold);font-size:17px;font-weight:700;margin-bottom:10px">ضمان الجودة</h3><p style="color:var(--dim);font-size:14px;line-height:1.7">نضمن لك نتيجة طبيعية ومرضية</p></div>
-  </div>
-</div></section>
-
-<section class="section section-dark" id="services"><div class="section-inner">
-  <div class="section-label">خدماتنا</div><h2 class="section-title">خدمات متميزة بأعلى جودة</h2>
-  <div class="gold-divider"><div class="line-r"></div><div class="dia">◆</div><div class="line-l"></div></div>
-  <div class="services-grid">
-    <div class="service-card" onclick="scrollTo_('booking')">
-      <div style="position:absolute;top:0;right:0;width:120px;height:120px;background:radial-gradient(circle,rgba(201,168,76,.03),transparent);border-radius:0 24px 0 100%"></div>
-      <div style="width:64px;height:64px;border-radius:18px;background:linear-gradient(135deg,rgba(201,168,76,.09),rgba(201,168,76,.03));display:flex;align-items:center;justify-content:center;font-size:26px;color:var(--gold);border:1px solid rgba(201,168,76,.13);margin-bottom:20px;font-weight:700">✦</div>
-      <h3 style="font-size:22px;font-weight:800;margin-bottom:8px">تركيب شعر</h3>
-      <p style="color:var(--dim);font-size:14px;line-height:1.7;margin-bottom:24px">تركيب احترافي بأحدث التقنيات العالمية</p>
-      <div style="display:flex;align-items:center;justify-content:space-between"><div><span style="color:var(--gold);font-size:28px;font-weight:900">1700</span><span style="color:var(--gold-dark);font-size:14px;margin-right:6px"> ريال</span></div><div style="background:linear-gradient(135deg,var(--gold-dark),var(--gold));color:var(--bg);padding:10px 24px;border-radius:12px;font-size:13px;font-weight:800">احجز الآن</div></div>
-    </div>
-    <div class="service-card" onclick="scrollTo_('booking')">
-      <div style="position:absolute;top:0;right:0;width:120px;height:120px;background:radial-gradient(circle,rgba(201,168,76,.03),transparent);border-radius:0 24px 0 100%"></div>
-      <div style="width:64px;height:64px;border-radius:18px;background:linear-gradient(135deg,rgba(201,168,76,.09),rgba(201,168,76,.03));display:flex;align-items:center;justify-content:center;font-size:26px;color:var(--gold);border:1px solid rgba(201,168,76,.13);margin-bottom:20px;font-weight:700">◈</div>
-      <h3 style="font-size:22px;font-weight:800;margin-bottom:8px">تغيير لاصق</h3>
-      <p style="color:var(--dim);font-size:14px;line-height:1.7;margin-bottom:24px">تغيير اللاصق بمواد طبية آمنة</p>
-      <div style="display:flex;align-items:center;justify-content:space-between"><div><span style="color:var(--gold);font-size:28px;font-weight:900">150</span><span style="color:var(--gold-dark);font-size:14px;margin-right:6px"> ريال</span></div><div style="background:linear-gradient(135deg,var(--gold-dark),var(--gold));color:var(--bg);padding:10px 24px;border-radius:12px;font-size:13px;font-weight:800">احجز الآن</div></div>
-    </div>
-  </div>
-</div></section>
-
-<section class="booking-section" id="booking"><div class="section-inner">
-  <div class="section-label">احجز موعدك</div><h2 class="section-title">احجز الآن في دقائق</h2>
-  <div class="gold-divider"><div class="line-r"></div><div class="dia">◆</div><div class="line-l"></div></div>
-  <div class="booking-wrap">
-    <div class="b-steps" id="bSteps"></div>
-    <div class="b-step-content fade-in" id="bContent">
-
-      <div id="bStep0">
-        <h3 class="b-title">اختر الفرع</h3>
-        <div style="display:flex;flex-direction:column;gap:14px" id="branchList"></div>
-      </div>
-
-      <div id="bStep1" class="hidden">
-        <h3 class="b-title">اختر الخدمة</h3>
-        <div style="display:flex;flex-direction:column;gap:14px" id="serviceList"></div>
-        <div style="text-align:center;margin-top:20px"><button class="btn-back" onclick="goStep(0)">→ رجوع</button></div>
-      </div>
-
-      <div id="bStep2" class="hidden">
-        <h3 class="b-title">اختر التاريخ</h3>
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;padding:0 4px">
-          <button class="cal-nav-btn" onclick="calNext()">→</button>
-          <div id="calMonthLabel" style="color:var(--gold);font-size:18px;font-weight:800;letter-spacing:1px"></div>
-          <button class="cal-nav-btn" onclick="calPrev()">←</button>
-        </div>
-        <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:8px">
-          <div class="cal-day-header" style="color:var(--gold)">سبت</div>
-          <div class="cal-day-header" style="color:var(--dim)">أحد</div>
-          <div class="cal-day-header" style="color:var(--dim)">إثن</div>
-          <div class="cal-day-header" style="color:var(--dim)">ثلا</div>
-          <div class="cal-day-header" style="color:var(--dim)">أرب</div>
-          <div class="cal-day-header" style="color:var(--dim)">خمي</div>
-          <div class="cal-day-header" style="color:#444">جمع</div>
-        </div>
-        <div id="calGrid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px"></div>
-        <div style="text-align:center;margin-top:20px"><button class="btn-back" onclick="goStep(1)">→ رجوع</button></div>
-      </div>
-
-      <div id="bStep3" class="hidden">
-        <h3 class="b-title">اختر الوقت</h3>
-        <div id="timeGrid" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px"></div>
-        <div style="text-align:center;margin-top:20px"><button class="btn-back" onclick="goStep(2)">→ رجوع</button></div>
-      </div>
-
-      <div id="bStep4" class="hidden">
-        <h3 class="b-title">بيانات الحجز والدفع</h3>
-        <div id="bookingSummary" style="background:linear-gradient(135deg,rgba(201,168,76,.02),var(--bg-card));border-radius:14px;padding:16px;border:1px solid #1e1e1e;margin-bottom:20px"></div>
-
-        <div id="adhesiveQuestionBox" class="hidden">
-          <div style="color:var(--gold-dark);font-size:13px;margin-bottom:10px;letter-spacing:2px;font-weight:700">
-            هل اللاصقة من عمار أو من الخارج؟
-          </div>
-          <div id="adhesiveSourceList" style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px"></div>
-        </div>
-
-        <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:22px">
-          <input type="text" class="b-input" id="inpName" placeholder="الاسم الكامل" oninput="checkReady()">
-          <input type="tel" class="b-input" id="inpPhone" placeholder="رقم الجوال (05XXXXXXXX)" oninput="checkReady()">
-        </div>
-
-        <div style="color:var(--gold-dark);font-size:13px;margin-bottom:10px;letter-spacing:2px;font-weight:700">طريقة الدفع</div>
-        <div id="paymentList" style="display:flex;flex-direction:column;gap:10px;margin-bottom:24px"></div>
-        <div id="installBox" class="hidden"></div>
-        <div style="display:flex;flex-direction:column;align-items:center;gap:12px">
-          <button class="btn-confirm" id="confirmBtn" disabled onclick="confirmBooking()">تأكيد الحجز</button>
-          <button class="btn-back" onclick="goStep(3)">→ رجوع</button>
-        </div>
-      </div>
-
-      <div id="bConfirm" class="hidden" style="text-align:center">
-        <div style="width:90px;height:90px;border-radius:50%;background:linear-gradient(135deg,var(--gold-dark),var(--gold));display:flex;align-items:center;justify-content:center;margin:0 auto 20px;animation:checkPop .6s ease-out;box-shadow:0 0 40px rgba(201,168,76,.2)"><span style="font-size:42px;color:var(--bg)">✓</span></div>
-        <h3 style="color:var(--gold);font-size:26px;font-weight:800;margin-bottom:6px">تم تأكيد الحجز</h3>
-        <p style="color:var(--dim);font-size:14px;margin-bottom:28px">سيتم التواصل معك لتأكيد موعدك</p>
-        <div id="confirmDetails" style="background:var(--bg-card);border-radius:16px;padding:20px;border:1px solid #1e1e1e;text-align:right;margin-bottom:24px"></div>
-        <div style="display:flex;flex-direction:column;align-items:center;gap:12px">
-          <button class="btn-wa" onclick="sendWhatsApp()">💬 تأكيد عبر واتساب</button>
-          <button class="btn-back" onclick="resetBooking()">حجز جديد</button>
-        </div>
-      </div>
-
-    </div>
-  </div>
-</div></section>
-
-<section class="section section-alt" id="reviews"><div class="section-inner">
-  <div class="section-label">آراء العملاء</div><h2 class="section-title">ماذا يقول عملاؤنا</h2>
-  <div class="gold-divider"><div class="line-r"></div><div class="dia">◆</div><div class="line-l"></div></div>
-  <div class="reviews-grid">
-    <div class="review-card"><div style="color:var(--gold);font-size:32px;opacity:.4;margin-bottom:16px">"</div><p style="color:#ccc;font-size:14px;line-height:1.8;margin-bottom:20px">أفضل صالون لتركيب الشعر المستعار، النتيجة طبيعية جداً وما أحد يقدر يفرق</p></div>
-    <div class="review-card"><div style="color:var(--gold);font-size:32px;opacity:.4;margin-bottom:16px">"</div><p style="color:#ccc;font-size:14px;line-height:1.8;margin-bottom:20px">تجربة ممتازة من أول زيارة، الفريق محترف والنتيجة فاقت التوقعات</p></div>
-    <div class="review-card"><div style="color:var(--gold);font-size:32px;opacity:.4;margin-bottom:16px">"</div><p style="color:#ccc;font-size:14px;line-height:1.8;margin-bottom:20px">خدمة راقية وأسعار مناسبة، أنصح الكل يجرب عندهم</p></div>
-  </div>
-</div></section>
-
-<footer class="footer"><div style="max-width:900px;margin:0 auto">
-  <div style="font-size:32px;font-weight:900;background:linear-gradient(135deg,var(--gold-dark),var(--gold),var(--gold-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px">إبداع عمار</div>
-  <p style="color:var(--gold-dark);font-size:13px;letter-spacing:3px;margin-bottom:24px">لتركيب الشعر المستعار</p>
-</div></footer>
+<button onclick="book()">تأكيد الحجز</button>
 
 <script>
 const SUPABASE_URL = "https://vmbaxqghabxzvkcwxjdy.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZtYmF4cWdoYWJ4enZrY3h3amR5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxODI3NzQsImV4cCI6MjA4OTc1ODc3NH0.HGpFOtSqhhrn-kNQZU0IDVY7j6lzMkSNL2Z8_fLRbSY";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...";
 
-var menuOpen = false;
-function toggleMenu() { menuOpen = !menuOpen; document.getElementById('mobileMenu').classList.toggle('open', menuOpen); }
-function closeMenu() { menuOpen = false; document.getElementById('mobileMenu').classList.remove('open'); }
-function scrollTo_(id) { document.getElementById(id).scrollIntoView({ behavior: 'smooth' }); }
-window.addEventListener('scroll', function() { document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 60); });
-
-var bStep = 0;
-var bData = {
-  branch:'', branchName:'', service:'', serviceName:'', servicePrice:0,
-  adhesiveSource:'', adhesiveSourceName:'',
-  day:'', dayLabel:'', time:'',
-  payment:'', paymentName:'',
-  name:'', phone:''
-};
-var calYear, calMonth;
-var now = new Date(); calYear = now.getFullYear(); calMonth = now.getMonth();
-
-var BRANCHES_DATA = [
-  { id:'riyadh', name:'الرياض' },
-  { id:'dammam', name:'الدمام' }
-];
-var SERVICES_DATA = [
-  { id:'install', name:'تركيب شعر', price:1700, icon:'✦' },
-  { id:'adhesive', name:'تغيير لاصق', price:150, icon:'◈' }
-];
-var ADHESIVE_SOURCES = [
-  { id:'ammar', name:'من عمار', icon:'🏪' },
-  { id:'outside', name:'من الخارج', icon:'📦' }
-];
-var PAYS = [
-  { id:'cash', name:'ادفع بالمكان', icon:'💵', desc:'الدفع عند الوصول' },
-  { id:'tabby', name:'تابي', icon:'🟣', desc:'4 دفعات بدون فوائد' },
-  { id:'tamara', name:'تمارا', icon:'🔵', desc:'4 دفعات بدون فوائد' }
-];
-var AR_MONTHS = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
-var AR_DAYS_FULL = ['الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
-
-function supaHeaders() {
+function headers() {
   return {
-    apikey: SUPABASE_KEY,
-    Authorization: `Bearer ${SUPABASE_KEY}`,
-    "Content-Type": "application/json",
-    "Accept": "application/json",
-    Prefer: "return=representation"
+    "apikey": SUPABASE_KEY,
+    "Authorization": "Bearer " + SUPABASE_KEY,
+    "Content-Type": "application/json"
   };
 }
 
-async function saveBookingToSupabase(data) {
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/bookings`, {
-    method: "POST",
-    headers: supaHeaders(),
-    body: JSON.stringify(data)
-  });
-
-  const text = await res.text();
-  console.log("Supabase status:", res.status);
-  console.log("Supabase response:", text);
-
-  if (!res.ok) {
-    throw new Error(text || "Supabase insert failed");
-  }
+async function book() {
+  const name = document.getElementById("name").value;
+  const phone = document.getElementById("phone").value;
 
   try {
-    return text ? JSON.parse(text) : [];
-  } catch {
-    return text;
-  }
-}
-
-function makeReferralCode(phone){
-  const last4 = String(phone || "").slice(-4);
-  const rand = Math.random().toString(36).slice(2,5).toUpperCase();
-  return last4 + rand;
-}
-
-async function upsertCustomerFromBooking(payload) {
-  const checkRes = await fetch(`${SUPABASE_URL}/rest/v1/customers?select=id,name,phone,branch&phone=eq.${encodeURIComponent(payload.customer_phone)}&limit=1`, {
-    method: "GET",
-    headers: supaHeaders()
-  });
-
-  if (!checkRes.ok) {
-    throw new Error(await checkRes.text() || "Customer lookup failed");
-  }
-
-  const existing = await checkRes.json();
-
-  if (existing && existing.length) {
-    const row = existing[0];
-    const updateRes = await fetch(`${SUPABASE_URL}/rest/v1/customers?id=eq.${row.id}`, {
-      method: "PATCH",
-      headers: supaHeaders(),
+    // 1️⃣ حفظ الحجز
+    await fetch(`${SUPABASE_URL}/rest/v1/bookings`, {
+      method: "POST",
+      headers: headers(),
       body: JSON.stringify({
-        name: row.name || payload.customer_name,
-        branch: payload.branch || row.branch || "riyadh",
-        updated_at: new Date().toISOString()
+        customer_name: name,
+        customer_phone: phone,
+        branch: "الرياض",
+        service: "تركيب شعر",
+        price: 1700,
+        booking_date: "2026-03-31",
+        booking_time: "5:00 م",
+        payment_method: "ادفع بالمكان",
+        status: "pending",
+        notified: false
       })
     });
 
-    if (!updateRes.ok) {
-      throw new Error(await updateRes.text() || "Customer update failed");
-    }
-  } else {
-    const insertRes = await fetch(`${SUPABASE_URL}/rest/v1/customers`, {
+    // 2️⃣ إضافة العميل
+    await fetch(`${SUPABASE_URL}/rest/v1/customers`, {
       method: "POST",
-      headers: supaHeaders(),
+      headers: headers(),
       body: JSON.stringify([{
-        name: payload.customer_name,
-        phone: payload.customer_phone,
-        birthday: null,
-        branch: payload.branch || "riyadh",
+        name: name,
+        phone: phone,
+        branch: "الرياض",
         stamps: [false,false,false,false,false],
         total_rewards: 0,
         history: [],
-        referral_code: makeReferralCode(payload.customer_phone),
+        referral_code: phone.slice(-4) + "ABC",
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       }])
     });
 
-    if (!insertRes.ok) {
-      throw new Error(await insertRes.text() || "Customer insert failed");
-    }
-  }
-}
+    alert("تم الحجز بنجاح ✅");
 
-
-async function getBookedTimes(date) {
-  if (!date) return [];
-
-  try {
-    const url = `${SUPABASE_URL}/rest/v1/bookings?select=booking_time,status&booking_date=eq.${date}`;
-    const res = await fetch(url, {
-      method: "GET",
-      headers: supaHeaders()
-    });
-
-    if (!res.ok) {
-      const errText = await res.text();
-      console.error("getBookedTimes error:", errText);
-      return [];
-    }
-
-    const data = await res.json();
-
-    return data
-      .filter(function(row) {
-        return !row.status || row.status !== 'cancelled';
-      })
-      .map(function(row) {
-        return String(row.booking_time || '').trim();
-      })
-      .filter(Boolean);
   } catch (e) {
-    console.error("Fetch failed in getBookedTimes:", e);
-    return [];
+    console.error(e);
+    alert("فشل الحجز ❌");
   }
 }
-
-function genTimes() {
-  var s = [];
-  for (var h = 15; h <= 23; h++) {
-    var d = h > 12 ? h - 12 : h;
-    var p = h >= 12 ? 'م' : 'ص';
-    s.push(d + ':00 ' + p);
-    if (h < 23) s.push(d + ':30 ' + p);
-  }
-  s.push('12:00 ص');
-  return s;
-}
-var TIMES = genTimes();
-
-function renderSteps() {
-  var el = document.getElementById('bSteps'); el.innerHTML = '';
-  for (var i = 0; i < 5; i++) {
-    var d = document.createElement('div'); d.className = 'b-dot';
-    d.style.width = (i === bStep) ? '32px' : '10px';
-    d.style.background = (i === bStep) ? 'var(--gold)' : (i < bStep) ? 'var(--gold-dark)' : '#2a2a2a';
-    el.appendChild(d);
-  }
-}
-
-function showStep(n) {
-  bStep = n;
-  for (var i = 0; i <= 4; i++) document.getElementById('bStep' + i).classList.add('hidden');
-  document.getElementById('bConfirm').classList.add('hidden');
-  document.getElementById('bStep' + n).classList.remove('hidden');
-  renderSteps();
-}
-
-function transitionTo(n) {
-  var c = document.getElementById('bContent');
-  c.classList.remove('fade-in'); c.classList.add('fade-out');
-  setTimeout(function() {
-    showStep(n);
-    if (n === 2) renderCalendar();
-    if (n === 3) renderTimes();
-    c.classList.remove('fade-out'); c.classList.add('fade-in');
-  }, 250);
-}
-
-function goStep(n) { transitionTo(n); }
-
-function renderBranches() {
-  var el = document.getElementById('branchList'); el.innerHTML = '';
-  BRANCHES_DATA.forEach(function(b) {
-    var card = document.createElement('div');
-    card.className = 'b-card';
-    card.style.cssText = 'display:flex;align-items:center;gap:16px;padding:24px';
-    card.innerHTML = '<div style="width:52px;height:52px;border-radius:14px;background:rgba(201,168,76,.07);display:flex;align-items:center;justify-content:center;font-size:22px;border:1px solid rgba(201,168,76,.13);flex-shrink:0">📍</div>' +
-      '<div style="flex:1"><div style="font-size:19px;font-weight:700">' + b.name + '</div><div style="color:var(--dim);font-size:12px;margin-top:3px">فرع ' + b.name + '</div></div>' +
-      '<div style="background:linear-gradient(135deg,var(--gold-dark),var(--gold),var(--gold-light));color:var(--bg);padding:10px 20px;border-radius:10px;font-size:13px;font-weight:800;white-space:nowrap">احجز الآن</div>';
-    card.onclick = function() { bData.branch = b.id; bData.branchName = b.name; transitionTo(1); };
-    el.appendChild(card);
-  });
-}
-
-function renderServices() {
-  var el = document.getElementById('serviceList'); el.innerHTML = '';
-  SERVICES_DATA.forEach(function(s) {
-    var card = document.createElement('div');
-    card.className = 'b-card';
-    card.style.cssText = 'display:flex;align-items:center;gap:16px;padding:24px';
-    card.innerHTML = '<div style="width:52px;height:52px;border-radius:14px;background:rgba(201,168,76,.07);display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--gold);border:1px solid rgba(201,168,76,.13);font-weight:700;flex-shrink:0">' + s.icon + '</div>' +
-      '<div style="flex:1;font-size:17px;font-weight:700">' + s.name + '</div>' +
-      '<div style="background:rgba(201,168,76,.07);padding:8px 16px;border-radius:10px;border:1px solid rgba(201,168,76,.13)"><span style="color:var(--gold);font-size:20px;font-weight:800">' + s.price + '</span><span style="color:var(--gold-dark);font-size:12px"> ريال</span></div>';
-    card.onclick = function() {
-      bData.service = s.id;
-      bData.serviceName = s.name;
-      bData.servicePrice = s.price;
-      bData.adhesiveSource = '';
-      bData.adhesiveSourceName = '';
-      transitionTo(2);
-    };
-    el.appendChild(card);
-  });
-}
-
-function calPrev() {
-  var n = new Date();
-  if (calMonth === n.getMonth() && calYear === n.getFullYear()) return;
-  calMonth--;
-  if (calMonth < 0) { calMonth = 11; calYear--; }
-  renderCalendar();
-}
-
-function calNext() {
-  var n = new Date();
-  var maxM = n.getMonth() + 3;
-  var maxY = n.getFullYear() + Math.floor(maxM / 12);
-  maxM = maxM % 12;
-  if (calYear > maxY || (calYear === maxY && calMonth >= maxM)) return;
-  calMonth++;
-  if (calMonth > 11) { calMonth = 0; calYear++; }
-  renderCalendar();
-}
-
-function renderCalendar() {
-  document.getElementById('calMonthLabel').textContent = AR_MONTHS[calMonth] + ' ' + calYear;
-  var grid = document.getElementById('calGrid');
-  grid.innerHTML = '';
-
-  var today = new Date(); today.setHours(0, 0, 0, 0);
-  var firstDay = new Date(calYear, calMonth, 1);
-  var startDow = firstDay.getDay();
-  var offset = (startDow + 1) % 7;
-  var daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
-
-  for (var e = 0; e < offset; e++) {
-    var empty = document.createElement('div');
-    empty.style.height = '46px';
-    grid.appendChild(empty);
-  }
-
-  for (var d = 1; d <= daysInMonth; d++) {
-    var date = new Date(calYear, calMonth, d);
-    var dow = date.getDay();
-    var isPast = date < today;
-    var isFriday = dow === 5;
-    var isToday = date.getTime() === today.getTime();
-    var dateStr = calYear + '-' + String(calMonth + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0');
-    var isSelected = bData.day === dateStr;
-    var disabled = isPast || isFriday;
-
-    var cell = document.createElement('div');
-    cell.className = 'cal-cell';
-
-    if (isSelected) {
-      cell.classList.add('selected');
-    } else if (isToday && !disabled) {
-      cell.classList.add('today', 'clickable');
-    } else if (disabled) {
-      cell.classList.add('past');
-    } else {
-      cell.classList.add('normal', 'clickable');
-    }
-
-    cell.textContent = d;
-
-    if (!disabled && !isSelected) {
-      (function(dateStr, d, dow) {
-        cell.onclick = function() {
-          var dayName = AR_DAYS_FULL[dow];
-          bData.day = dateStr;
-          bData.dayLabel = dayName + ' ' + d + ' ' + AR_MONTHS[calMonth] + ' ' + calYear;
-          bData.time = '';
-          renderCalendar();
-          setTimeout(function() { transitionTo(3); }, 300);
-        };
-      })(dateStr, d, dow);
-    }
-
-    grid.appendChild(cell);
-  }
-}
-
-async function renderTimes() {
-  var g = document.getElementById('timeGrid');
-  g.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--dim)">جاري تحميل الأوقات...</div>';
-
-  try {
-    const bookedTimes = await getBookedTimes(bData.day);
-
-    g.innerHTML = '';
-
-    TIMES.forEach(function(t) {
-      var normalizedTime = String(t).trim();
-
-      if (bookedTimes.includes(normalizedTime)) return;
-
-      var card = document.createElement('div');
-      card.className = 'b-card' + (bData.time === t ? ' sel' : '');
-      card.style.textAlign = 'center';
-      card.style.padding = '14px 8px';
-      var col = bData.time === t ? 'var(--gold)' : 'var(--text)';
-      card.innerHTML = '<div style="font-size:14px;font-weight:600;color:' + col + '">' + t + '</div>';
-
-      (function(time) {
-        card.onclick = function() {
-          bData.time = time;
-          renderTimes();
-          setTimeout(function() {
-            renderSummary();
-            renderAdhesiveSources();
-            renderPayments();
-            renderInstallment();
-            transitionTo(4);
-          }, 200);
-        };
-      })(t);
-
-      g.appendChild(card);
-    });
-
-    if (g.innerHTML === '') {
-      g.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:#888">لا يوجد مواعيد متاحة في هذا اليوم</div>';
-    }
-  } catch (e) {
-    console.error("renderTimes error:", e);
-    g.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:#f87171">تعذر تحميل الأوقات حالياً</div>';
-  }
-}
-
-function updateServicePriceByAdhesiveSource() {
-  if (bData.service === 'adhesive') {
-    if (bData.adhesiveSource === 'outside') {
-      bData.servicePrice = 200;
-    } else {
-      bData.servicePrice = 150;
-    }
-  } else if (bData.service === 'install') {
-    bData.servicePrice = 1700;
-  }
-}
-
-function renderSummary() {
-  var extraRow = '';
-
-  if (bData.service === 'adhesive') {
-    extraRow = '<div style="margin-bottom:6px"><span style="color:var(--dim);font-size:12px">🧴 ' + (bData.adhesiveSourceName || 'لم يتم التحديد بعد') + '</span></div>';
-  }
-
-  document.getElementById('bookingSummary').innerHTML =
-    '<div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="color:var(--dim);font-size:12px">📍 ' + bData.branchName + '</span><span style="color:var(--dim);font-size:12px">🕐 ' + bData.time + '</span></div>' +
-    '<div style="margin-bottom:6px"><span style="color:var(--dim);font-size:12px">📅 ' + bData.dayLabel + '</span></div>' +
-    extraRow +
-    '<div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:15px;font-weight:600">' + bData.serviceName + '</span><span style="color:var(--gold);font-size:20px;font-weight:800">' + bData.servicePrice + ' <span style="font-size:12px;color:var(--gold-dark)">ريال</span></span></div>';
-}
-
-function renderAdhesiveSources() {
-  var box = document.getElementById('adhesiveQuestionBox');
-  var l = document.getElementById('adhesiveSourceList');
-
-  if (bData.service !== 'adhesive') {
-    box.classList.add('hidden');
-    l.innerHTML = '';
-    return;
-  }
-
-  box.classList.remove('hidden');
-  l.innerHTML = '';
-
-  ADHESIVE_SOURCES.forEach(function(c) {
-    var card = document.createElement('div');
-    card.className = 'b-card' + (bData.adhesiveSource === c.id ? ' sel' : '');
-    card.style.cssText = 'display:flex;align-items:center;gap:12px;padding:16px 18px';
-    card.innerHTML =
-      '<span style="font-size:22px">' + c.icon + '</span>' +
-      '<div style="flex:1"><div style="font-size:15px;font-weight:700;color:' + (bData.adhesiveSource === c.id ? 'var(--gold)' : 'var(--text)') + '">' + c.name + '</div></div>' +
-      (bData.adhesiveSource === c.id ? '<div style="color:var(--gold);font-size:16px">✓</div>' : '');
-
-    card.onclick = function() {
-      bData.adhesiveSource = c.id;
-      bData.adhesiveSourceName = c.name;
-      updateServicePriceByAdhesiveSource();
-      renderAdhesiveSources();
-      renderSummary();
-      renderInstallment();
-      checkReady();
-    };
-
-    l.appendChild(card);
-  });
-}
-
-function renderPayments() {
-  var l = document.getElementById('paymentList'); l.innerHTML = '';
-  PAYS.forEach(function(p) {
-    var card = document.createElement('div');
-    card.className = 'b-card' + (bData.payment === p.id ? ' sel' : '');
-    card.style.cssText = 'display:flex;align-items:center;gap:12px;padding:16px 18px';
-    card.innerHTML = '<span style="font-size:22px">' + p.icon + '</span><div style="flex:1"><div style="font-size:15px;font-weight:700;color:' + (bData.payment === p.id ? 'var(--gold)' : 'var(--text)') + '">' + p.name + '</div><div style="color:#666;font-size:11px">' + p.desc + '</div></div>' + (bData.payment === p.id ? '<div style="color:var(--gold);font-size:16px">✓</div>' : '');
-    card.onclick = function() { bData.payment = p.id; bData.paymentName = p.name; renderPayments(); renderInstallment(); checkReady(); };
-    l.appendChild(card);
-  });
-}
-
-function renderInstallment() {
-  var box = document.getElementById('installBox');
-  if (bData.payment === 'tabby' || bData.payment === 'tamara') {
-    box.classList.remove('hidden');
-    var per = Math.round(bData.servicePrice / 4);
-    var label = bData.payment === 'tabby' ? 'تابي' : 'تمارا';
-    var h = '<div style="background:rgba(201,168,76,.02);border-radius:14px;padding:16px;border:1px solid #1e1e1e;text-align:center;margin-bottom:24px"><div style="color:#aaa;font-size:12px;margin-bottom:8px">' + label + ' - 4 دفعات</div><div style="display:flex;justify-content:center;gap:8px">';
-    for (var i = 1; i <= 4; i++) h += '<div style="background:var(--bg-card2);border-radius:10px;padding:8px 12px;border:1px solid rgba(201,168,76,.08)"><div style="color:var(--dim);font-size:10px">الدفعة ' + i + '</div><div style="color:var(--gold);font-size:15px;font-weight:800">' + per + '</div></div>';
-    h += '</div></div>';
-    box.innerHTML = h;
-  } else {
-    box.classList.add('hidden');
-  }
-}
-
-function checkReady() {
-  var n = document.getElementById('inpName').value.trim();
-  var p = document.getElementById('inpPhone').value.trim();
-
-  var adhesiveReady = true;
-  if (bData.service === 'adhesive') {
-    adhesiveReady = !!bData.adhesiveSource;
-  }
-
-  document.getElementById('confirmBtn').disabled = !(adhesiveReady && bData.payment && n && p);
-}
-
-async function confirmBooking() {
-  var btn = document.getElementById('confirmBtn');
-  bData.name = document.getElementById('inpName').value.trim();
-  bData.phone = document.getElementById('inpPhone').value.trim();
-
-  if (bData.service === 'adhesive' && !bData.adhesiveSource) {
-    alert('حدد هل اللاصقة من عمار أو من الخارج');
-    return;
-  }
-
-  if (!bData.name || !bData.phone || !bData.payment) {
-    alert('كمّل البيانات أولًا');
-    return;
-  }
-
-  if (!bData.day || !bData.time) {
-    alert('اختر اليوم والوقت أولًا');
-    return;
-  }
-
-  btn.disabled = true;
-  btn.textContent = 'جاري الحفظ...';
-
-  try {
-    const bookedTimes = await getBookedTimes(bData.day);
-    if (bookedTimes.includes(String(bData.time).trim())) {
-      alert('هذا الموعد تم حجزه بالفعل، اختر وقتًا آخر');
-      btn.disabled = false;
-      btn.textContent = 'تأكيد الحجز';
-      transitionTo(3);
-      return;
-    }
-
-    const payload = {
-      customer_name: bData.name,
-      customer_phone: bData.phone,
-      adhesive_source: bData.adhesiveSourceName || null,
-      branch: bData.branchName,
-      service: bData.serviceName,
-      price: Number(bData.servicePrice),
-      booking_date: bData.day,
-      booking_time: bData.time,
-      payment_method: bData.paymentName,
-      status: "pending",
-      notified: false
-    };
-
-    console.log("Saving booking payload:", payload);
-    await saveBookingToSupabase(payload);
-    await upsertCustomerFromBooking(payload);
-
-    var c = document.getElementById('bContent');
-    c.classList.remove('fade-in'); c.classList.add('fade-out');
-    setTimeout(function() {
-      for (var i = 0; i <= 4; i++) document.getElementById('bStep' + i).classList.add('hidden');
-      var items = [
-        { l:'الفرع', v:bData.branchName, ic:'📍' },
-        { l:'الخدمة', v:bData.serviceName + ' - ' + bData.servicePrice + ' ريال', ic:'💇' }
-      ];
-
-      if (bData.service === 'adhesive') {
-        items.push({ l:'مصدر اللاصقة', v:bData.adhesiveSourceName, ic:'🧴' });
-      }
-
-      items = items.concat([
-        { l:'التاريخ', v:bData.dayLabel, ic:'📅' },
-        { l:'الوقت', v:bData.time, ic:'🕐' },
-        { l:'الدفع', v:bData.paymentName, ic:'💳' },
-        { l:'الاسم', v:bData.name, ic:'👤' },
-        { l:'الجوال', v:bData.phone, ic:'📱' }
-      ]);
-
-      document.getElementById('confirmDetails').innerHTML = items.map(function(it, i) {
-        return '<div style="display:flex;justify-content:space-between;padding:10px 0;' + (i < items.length - 1 ? 'border-bottom:1px solid #1e1e1e' : '') + '"><span style="color:var(--dim);font-size:13px">' + it.ic + ' ' + it.l + '</span><span style="font-size:14px;font-weight:600">' + it.v + '</span></div>';
-      }).join('');
-      document.getElementById('bConfirm').classList.remove('hidden');
-      renderSteps();
-      c.classList.remove('fade-out'); c.classList.add('fade-in');
-      btn.textContent = 'تأكيد الحجز';
-    }, 250);
-  } catch (error) {
-    console.error("Booking error:", error);
-    alert('فشل حفظ الحجز:\n' + (error.message || 'حصلت مشكلة غير معروفة'));
-    btn.disabled = false;
-    btn.textContent = 'تأكيد الحجز';
-  }
-}
-
-function sendWhatsApp() {
-  var adhesiveLine = '';
-  if (bData.service === 'adhesive') {
-    adhesiveLine = '\n🧴 مصدر اللاصقة: ' + bData.adhesiveSourceName;
-  }
-
-  var msg = 'مرحباً، أود تأكيد حجزي:\n📍 الفرع: ' + bData.branchName + '\n💇 الخدمة: ' + bData.serviceName + ' - ' + bData.servicePrice + ' ريال' + adhesiveLine + '\n📅 التاريخ: ' + bData.dayLabel + '\n🕐 الوقت: ' + bData.time + '\n💳 الدفع: ' + bData.paymentName + '\n👤 الاسم: ' + bData.name + '\n📱 الجوال: ' + bData.phone;
-  window.open('https://wa.me/966566626652?text=' + encodeURIComponent(msg), '_blank');
-}
-
-function resetBooking() {
-  bData = {
-    branch:'', branchName:'', service:'', serviceName:'', servicePrice:0,
-    adhesiveSource:'', adhesiveSourceName:'',
-    day:'', dayLabel:'', time:'',
-    payment:'', paymentName:'',
-    name:'', phone:''
-  };
-  document.getElementById('inpName').value = '';
-  document.getElementById('inpPhone').value = '';
-  document.getElementById('confirmBtn').disabled = true;
-  document.getElementById('confirmBtn').textContent = 'تأكيد الحجز';
-  transitionTo(0);
-}
-
-renderSteps();
-renderBranches();
-renderServices();
-renderCalendar();
-renderAdhesiveSources();
-renderPayments();
 </script>
+
 </body>
 </html>
