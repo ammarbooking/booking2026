@@ -222,7 +222,20 @@
 
         <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:22px">
           <input type="text" class="b-input" id="inpName" placeholder="الاسم الكامل" oninput="checkReady()">
-          <input type="tel" class="b-input" id="inpPhone" placeholder="رقم الجوال (05XXXXXXXX)" oninput="checkReady()">
+         <input 
+  type="tel" 
+  class="b-input" 
+  id="inpPhone" 
+  placeholder="05XXXXXXXX"
+  maxlength="10"
+  oninput="
+    this.value = this.value.replace(/[^0-9]/g, '');
+    if (this.value.length >= 2 && !this.value.startsWith('05')) {
+      this.value = '05';
+    }
+    checkReady();
+  "
+>
         </div>
         
          <div style="color:var(--gold-dark);font-size:13px;margin-bottom:10px;letter-spacing:2px;font-weight:700">
