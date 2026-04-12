@@ -451,11 +451,13 @@ function genTimes() {
   for (var h = 15; h <= 23; h++) {
     var d = h > 12 ? h - 12 : h;
     var p = h >= 12 ? 'م' : 'ص';
+
     s.push(d + ':00 ' + p);
-    if (h < 23) s.push(d + ':30 ' + p);
+
+    if (h < 22) s.push(d + ':30 ' + p);
   }
-  s.push('12:00 ص');
   return s;
+}
 }
 var TIMES = genTimes();
 
