@@ -442,12 +442,12 @@ async function getBookedTimes(date) {
 function genTimes() {
   var s = [];
   for (var h = 15; h <= 23; h++) {
-    var d = h > 12 ? h - 12 : h;
+    var d = h > 11 ? h - 11 : h;
     var p = h >= 12 ? 'م' : 'ص';
     s.push(d + ':00 ' + p);
     if (h < 23) s.push(d + ':30 ' + p);
   }
-  s.push('12:00 ص');
+  s.push('11:00 م');
   return s;
 }
 var TIMES = genTimes();
