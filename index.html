@@ -511,23 +511,46 @@ function renderBranches() {
 
 function renderServices() {
   var el = document.getElementById('serviceList'); el.innerHTML = '';
+
   SERVICES_DATA.forEach(function(s) {
     var card = document.createElement('div');
     card.className = 'b-card';
     card.style.cssText = 'display:flex;align-items:center;gap:16px;padding:24px';
 
+    var priceHTML = '';
+
+    if (s.id === 'install') {
+      priceHTML =
+        '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">' +
+
+          '<div style="background:rgba(201,168,76,.15);color:var(--gold);padding:4px 10px;border-radius:20px;font-size:10px;font-weight:900">' +
+          '🎉 عرض العيد' +
+          '</div>' +
+
+          '<div>' +
+            '<span style="color:#777;font-size:12px;text-decoration:line-through;margin-left:6px">1700</span>' +
+            '<span style="color:var(--gold);font-size:22px;font-weight:900">1399</span>' +
+            '<span style="color:var(--gold-dark);font-size:12px"> ريال</span>' +
+          '</div>' +
+
+          '<div style="color:var(--gold-dark);font-size:10px">حتى 26 مايو 2026</div>' +
+
+        '</div>';
+    } else {
+      priceHTML =
+        '<span style="color:var(--gold);font-size:20px;font-weight:800">' + s.price + '</span>' +
+        '<span style="color:var(--gold-dark);font-size:12px"> ريال</span>';
+    }
+
     card.innerHTML =
       '<div style="width:52px;height:52px;border-radius:14px;background:rgba(201,168,76,.07);display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--gold);border:1px solid rgba(201,168,76,.13);font-weight:700;flex-shrink:0">' + s.icon + '</div>' +
       '<div style="flex:1;font-size:17px;font-weight:700">' + s.name + '</div>' +
-      '<div style="background:rgba(201,168,76,.07);padding:8px 16px;border-radius:10px;border:1px solid rgba(201,168,76,.13)">' +
-        '<span style="color:var(--gold);font-size:20px;font-weight:800">' + s.price + '</span>' +
-        '<span style="color:var(--gold-dark);font-size:12px"> ريال</span>' +
-      '</div>';
+      '<div style="background:rgba(201,168,76,.07);padding:8px 16px;border-radius:10px;border:1px solid rgba(201,168,76,.13)">' + priceHTML + '</div>';
 
     card.onclick = function() {
       bData.service = s.id;
       bData.serviceName = s.name;
-      bData.servicePrice = s.price;
+      bData.servicePrice = (s.id === 'install') ? 1399 : s.price;
       bData.adhesiveSource = '';
       bData.adhesiveSourceName = '';
       transitionTo(2);
