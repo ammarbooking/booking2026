@@ -510,21 +510,21 @@ function renderBranches() {
 }
 
 function renderServices() {
-  var el = document.getElementById('serviceList'); el.innerHTML = '';
-  SERVICES_DATA.forEach(function(s) {
-    var card = document.createElement('div');
-    card.className = 'b-card';
-    card.style.cssText = 'display:flex;align-items:center;gap:16px;padding:24px';
-
-   var priceHTML = '';
+ var priceHTML = '';
 
 if (s.id === 'install') {
   priceHTML =
     '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">' +
-'<div style="background:linear-gradient(135deg,rgba(201,168,76,.25),rgba(201,168,76,.06));' +
-'color:var(--gold);padding:4px 10px;border-radius:20px;font-size:10px;font-weight:900;letter-spacing:1px">' +
-'🎉 عرض العيد حتى 26 مايو 2026' +
-'</div>'
+
+      '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px">' +
+        '<div style="background:linear-gradient(135deg,rgba(201,168,76,.25),rgba(201,168,76,.06));' +
+        'color:var(--gold);padding:4px 10px;border-radius:20px;font-size:10px;font-weight:900;letter-spacing:1px">' +
+        '🎉 عرض العيد' +
+        '</div>' +
+        '<div style="color:var(--gold-dark);font-size:10px;opacity:.9">' +
+        'حتى 26 مايو 2026' +
+        '</div>' +
+      '</div>' +
 
       '<div style="display:flex;align-items:baseline;gap:6px">' +
         '<span style="color:#666;font-size:12px;text-decoration:line-through;opacity:.8">1700</span>' +
