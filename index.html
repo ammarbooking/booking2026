@@ -580,7 +580,10 @@ function calNext() {
 }
 
 function renderCalendar() {
-  document.getElementById('calMonthLabel').textContent = AR_MONTHS[calMonth] + ' ' + calYear;
+
+  document.getElementById('calMonthLabel').textContent =
+    AR_MONTHS[calMonth] + ' ' + calYear;
+
   var grid = document.getElementById('calGrid');
   grid.innerHTML = '';
 
@@ -592,7 +595,7 @@ function renderCalendar() {
   var offset = (startDow + 1) % 7;
   var daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
 
-  // 🚫 أيام الإيقاف
+  // 🚫 الأيام المغلقة
   var blockedDates = [
     '2026-05-27',
     '2026-05-28',
@@ -600,12 +603,16 @@ function renderCalendar() {
     '2026-05-30'
   ];
 
+  // الفراغات قبل أول يوم
   for (var e = 0; e < offset; e++) {
+
     var empty = document.createElement('div');
     empty.style.height = '46px';
+
     grid.appendChild(empty);
   }
 
+  // الأيام
   for (var d = 1; d <= daysInMonth; d++) {
 
     var date = new Date(calYear, calMonth, d);
@@ -622,30 +629,37 @@ function renderCalendar() {
 
     var isSelected = bData.day === dateStr;
 
-    // 🚫 فحص الأيام المقفولة
+    // 🚫 هل اليوم مقفول
     var isBlocked = blockedDates.includes(dateStr);
 
-    // ❌ تعطيل اليوم
-    var disabled = isPast || isFriday || isBlocked;
+    var disabled =
+      isPast ||
+      isFriday ||
+      isBlocked;
 
     var cell = document.createElement('div');
     cell.className = 'cal-cell';
 
     if (isSelected) {
+
       cell.classList.add('selected');
 
     } else if (isToday && !disabled) {
+
       cell.classList.add('today', 'clickable');
 
     } else if (disabled) {
+
       cell.classList.add('past');
 
     } else {
+
       cell.classList.add('normal', 'clickable');
     }
 
     cell.textContent = d;
 
+    // الضغط على اليوم
     if (!disabled && !isSelected) {
 
       (function(dateStr, d, dow) {
@@ -667,17 +681,15 @@ function renderCalendar() {
           renderCalendar();
 
           setTimeout(function() {
+
             transitionTo(3);
+
           }, 300);
 
         };
 
       })(dateStr, d, dow);
     }
-
-    grid.appendChild(cell);
-  }
-}
 
     grid.appendChild(cell);
   }
