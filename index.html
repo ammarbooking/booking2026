@@ -231,7 +231,24 @@
   gap:10px;
 ">
 
-  <div style="display:flex;flex-direction:column;gap:4px">
+<section class="booking-section" id="booking"><div class="section-inner">
+  <div class="section-label">احجز موعدك</div><h2 class="section-title">احجز الآن في دقائق</h2>
+  <div class="gold-divider"><div class="line-r"></div><div class="dia">◆</div><div class="line-l"></div></div>
+  <div class="booking-wrap">
+    <div class="b-steps" id="bSteps"></div>
+    <div class="b-step-content fade-in" id="bContent">
+
+      <div id="bStep0">
+        <h3 class="b-title">اختر الفرع</h3>
+        <div style="display:flex;flex-direction:column;gap:14px" id="branchList"></div>
+      </div>
+
+      <div id="bStep1" class="hidden">
+        <h3 class="b-title">اختر الخدمة</h3>
+        <div style="display:flex;flex-direction:column;gap:14px" id="serviceList"></div>
+        <div style="text-align:center;margin-top:20px"><button class="btn-back" onclick="goStep(0)">→ رجوع</button></div>
+      </div>
+        <div style="display:flex;flex-direction:column;gap:4px">
     <div style="color:var(--gold);font-weight:900;font-size:15px">
       🎉 عرض العيد - خصم خاص
     </div>
@@ -272,25 +289,6 @@
   </div>
 
 </div>
-
-
-<section class="booking-section" id="booking"><div class="section-inner">
-  <div class="section-label">احجز موعدك</div><h2 class="section-title">احجز الآن في دقائق</h2>
-  <div class="gold-divider"><div class="line-r"></div><div class="dia">◆</div><div class="line-l"></div></div>
-  <div class="booking-wrap">
-    <div class="b-steps" id="bSteps"></div>
-    <div class="b-step-content fade-in" id="bContent">
-
-      <div id="bStep0">
-        <h3 class="b-title">اختر الفرع</h3>
-        <div style="display:flex;flex-direction:column;gap:14px" id="branchList"></div>
-      </div>
-
-      <div id="bStep1" class="hidden">
-        <h3 class="b-title">اختر الخدمة</h3>
-        <div style="display:flex;flex-direction:column;gap:14px" id="serviceList"></div>
-        <div style="text-align:center;margin-top:20px"><button class="btn-back" onclick="goStep(0)">→ رجوع</button></div>
-      </div>
 
       <div id="bStep2" class="hidden">
         <h3 class="b-title">اختر التاريخ</h3>
