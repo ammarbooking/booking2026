@@ -242,22 +242,35 @@
       position:absolute;
       top:0;left:10px;
     ">
-      <div style="
-        width:6px;height:6px;background:#fff;border-radius:50%;
-        position:absolute;top:12px;left:10px;
-      "></div>
-      <div style="
-        width:6px;height:6px;background:#fff;border-radius:50%;
-        position:absolute;top:12px;left:25px;
-      "></div>
-    </div>
-  </div>
+ <div style="text-align:center;margin:20px;">
+  <svg width="140" height="120" viewBox="0 0 140 120" style="animation:float 2s ease-in-out infinite;">
+    
+    <!-- body -->
+    <ellipse cx="70" cy="70" rx="45" ry="30" fill="#fff" stroke="#ddd" stroke-width="2"/>
+
+    <!-- wool bumps -->
+    <circle cx="45" cy="60" r="12" fill="#fff"/>
+    <circle cx="60" cy="50" r="14" fill="#fff"/>
+    <circle cx="80" cy="50" r="14" fill="#fff"/>
+    <circle cx="95" cy="60" r="12" fill="#fff"/>
+
+    <!-- head -->
+    <ellipse cx="35" cy="70" rx="18" ry="15" fill="#333"/>
+
+    <!-- eyes -->
+    <circle cx="30" cy="68" r="2" fill="#fff"/>
+    <circle cx="40" cy="68" r="2" fill="#fff"/>
+
+    <!-- legs -->
+    <rect x="55" y="95" width="6" height="18" fill="#333"/>
+    <rect x="75" y="95" width="6" height="18" fill="#333"/>
+  </svg>
 </div>
 
 <style>
-@keyframes bounce {
+@keyframes float {
   0%,100% { transform: translateY(0); }
-  50% { transform: translateY(-8px); }
+  50% { transform: translateY(-6px); }
 }
 </style>
 <section class="booking-section" id="booking"><div class="section-inner">
