@@ -584,11 +584,21 @@ function renderCalendar() {
   var grid = document.getElementById('calGrid');
   grid.innerHTML = '';
 
-  var today = new Date(); today.setHours(0, 0, 0, 0);
+  var today = new Date();
+  today.setHours(0, 0, 0, 0);
+
   var firstDay = new Date(calYear, calMonth, 1);
   var startDow = firstDay.getDay();
   var offset = (startDow + 1) % 7;
   var daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+
+  // 🚫 أيام الإيقاف
+  var blockedDates = [
+    '2026-05-27',
+    '2026-05-28',
+    '2026-05-29',
+    '2026-05-30'
+  ];
 
   for (var e = 0; e < offset; e++) {
     var empty = document.createElement('div');
@@ -597,24 +607,39 @@ function renderCalendar() {
   }
 
   for (var d = 1; d <= daysInMonth; d++) {
+
     var date = new Date(calYear, calMonth, d);
     var dow = date.getDay();
+
     var isPast = date < today;
     var isFriday = dow === 5;
     var isToday = date.getTime() === today.getTime();
-    var dateStr = calYear + '-' + String(calMonth + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0');
+
+    var dateStr =
+      calYear + '-' +
+      String(calMonth + 1).padStart(2, '0') + '-' +
+      String(d).padStart(2, '0');
+
     var isSelected = bData.day === dateStr;
-    var disabled = isPast || isFriday;
+
+    // 🚫 فحص الأيام المقفولة
+    var isBlocked = blockedDates.includes(dateStr);
+
+    // ❌ تعطيل اليوم
+    var disabled = isPast || isFriday || isBlocked;
 
     var cell = document.createElement('div');
     cell.className = 'cal-cell';
 
     if (isSelected) {
       cell.classList.add('selected');
+
     } else if (isToday && !disabled) {
       cell.classList.add('today', 'clickable');
+
     } else if (disabled) {
       cell.classList.add('past');
+
     } else {
       cell.classList.add('normal', 'clickable');
     }
@@ -622,17 +647,37 @@ function renderCalendar() {
     cell.textContent = d;
 
     if (!disabled && !isSelected) {
+
       (function(dateStr, d, dow) {
+
         cell.onclick = function() {
+
           var dayName = AR_DAYS_FULL[dow];
+
           bData.day = dateStr;
-          bData.dayLabel = dayName + ' ' + d + ' ' + AR_MONTHS[calMonth] + ' ' + calYear;
+
+          bData.dayLabel =
+            dayName + ' ' +
+            d + ' ' +
+            AR_MONTHS[calMonth] + ' ' +
+            calYear;
+
           bData.time = '';
+
           renderCalendar();
-          setTimeout(function() { transitionTo(3); }, 300);
+
+          setTimeout(function() {
+            transitionTo(3);
+          }, 300);
+
         };
+
       })(dateStr, d, dow);
     }
+
+    grid.appendChild(cell);
+  }
+}
 
     grid.appendChild(cell);
   }
