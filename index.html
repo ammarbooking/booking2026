@@ -99,43 +99,6 @@
     @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-20px)}}
     @keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
     @keyframes checkPop{0%{transform:scale(0)}50%{transform:scale(1.2)}100%{transform:scale(1)}}
-    .eid-banner{
-  background: linear-gradient(90deg,#C9A84C,#E8D48B,#C9A84C);
-  color:#111;
-  text-align:center;
-  padding:12px 10px;
-  font-weight:800;
-  font-size:14px;
-  position:sticky;
-  top:40px; /* عشان ما يدخلش تحت البار */
-  z-index:9999;
-}
-    .eid-sheep{
-  background: linear-gradient(135deg, rgba(201,168,76,.08), rgba(0,0,0,.2));
-  text-align:center;
-  padding:18px 10px;
-  border-bottom:1px solid rgba(201,168,76,.15);
-}
-
-.sheep-box{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  gap:6px;
-}
-
-.sheep-icon{
-  font-size:42px;
-  animation: float 3s ease-in-out infinite;
-  filter: drop-shadow(0 0 10px rgba(201,168,76,.3));
-}
-
-.eid-sheep{
-  margin-top: 12px;
-  padding-top: 26px;
-}
-
   </style>
 </head>
 <body>
@@ -144,10 +107,7 @@
   <span>🔥 عرض خاص: تركيب شعر مستعار بأحدث التقنيات</span><span>✨ خصم 10% على أول زيارة</span><span>⭐ إبداع عمار - الأول في تركيب الشعر المستعار</span><span>🎁 احجز الآن واحصل على استشارة مجانية</span><span>💈 فروعنا في الرياض والدمام لخدمتكم</span>
   <span>🔥 عرض خاص: تركيب شعر مستعار بأحدث التقنيات</span><span>✨ خصم 10% على أول زيارة</span><span>⭐ إبداع عمار - الأول في تركيب الشعر المستعار</span><span>🎁 احجز الآن واحصل على استشارة مجانية</span><span>💈 فروعنا في الرياض والدمام لخدمتكم</span>
 </div></div>
-<div class="eid-banner">
-  🎉 عرض العيد الأضحى المبارك — خصم خاص حتى 26-05-2026  
-  💳 غير شامل تابي وتمارا: <span style="color:#000;font-weight:900">1399</span> بدل <del>1700</del>
-</div>
+
 <nav class="navbar" id="navbar">
   <div class="nav-inner">
     <div class="nav-logo" onclick="scrollTo_('hero')">إبداع عمار</div>
@@ -158,12 +118,6 @@
     <a onclick="scrollTo_('hero');closeMenu()">الرئيسية</a><a onclick="scrollTo_('about');closeMenu()">من نحن</a><a onclick="scrollTo_('services');closeMenu()">خدماتنا</a><a onclick="scrollTo_('booking');closeMenu()">احجز موعدك</a><a onclick="scrollTo_('reviews');closeMenu()">آراء العملاء</a>
   </div>
 </nav>
-  <div class="eid-sheep">
-  <div class="sheep-box">
-    <div class="sheep-icon">🐑</div>
-    <div class="sheep-text">عيد أضحى مبارك 🌙✨</div>
-  </div>
-</div>
 
 <section class="hero" id="hero">
   <div class="hero-circle"></div><div class="hero-square"></div>
@@ -551,51 +505,21 @@ function renderBranches() {
 
 function renderServices() {
   var el = document.getElementById('serviceList'); el.innerHTML = '';
-
   SERVICES_DATA.forEach(function(s) {
     var card = document.createElement('div');
     card.className = 'b-card';
     card.style.cssText = 'display:flex;align-items:center;gap:16px;padding:24px';
-
-    var priceHTML = '';
-
-    if (s.id === 'install') {
-      priceHTML =
-        '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">' +
-
-          '<div style="background:rgba(201,168,76,.15);color:var(--gold);padding:4px 10px;border-radius:20px;font-size:10px;font-weight:900">' +
-          '🎉 عرض العيد' +
-          '</div>' +
-
-          '<div>' +
-            '<span style="color:#777;font-size:12px;text-decoration:line-through;margin-left:6px">1700</span>' +
-            '<span style="color:var(--gold);font-size:22px;font-weight:900">1399</span>' +
-            '<span style="color:var(--gold-dark);font-size:12px"> ريال</span>' +
-          '</div>' +
-
-          '<div style="color:var(--gold-dark);font-size:10px">حتى 26 مايو 2026</div>' +
-
-        '</div>';
-    } else {
-      priceHTML =
-        '<span style="color:var(--gold);font-size:20px;font-weight:800">' + s.price + '</span>' +
-        '<span style="color:var(--gold-dark);font-size:12px"> ريال</span>';
-    }
-
-    card.innerHTML =
-      '<div style="width:52px;height:52px;border-radius:14px;background:rgba(201,168,76,.07);display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--gold);border:1px solid rgba(201,168,76,.13);font-weight:700;flex-shrink:0">' + s.icon + '</div>' +
+    card.innerHTML = '<div style="width:52px;height:52px;border-radius:14px;background:rgba(201,168,76,.07);display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--gold);border:1px solid rgba(201,168,76,.13);font-weight:700;flex-shrink:0">' + s.icon + '</div>' +
       '<div style="flex:1;font-size:17px;font-weight:700">' + s.name + '</div>' +
-      '<div style="background:rgba(201,168,76,.07);padding:8px 16px;border-radius:10px;border:1px solid rgba(201,168,76,.13)">' + priceHTML + '</div>';
-
+      '<div style="background:rgba(201,168,76,.07);padding:8px 16px;border-radius:10px;border:1px solid rgba(201,168,76,.13)"><span style="color:var(--gold);font-size:20px;font-weight:800">' + s.price + '</span><span style="color:var(--gold-dark);font-size:12px"> ريال</span></div>';
     card.onclick = function() {
       bData.service = s.id;
       bData.serviceName = s.name;
-      bData.servicePrice = (s.id === 'install') ? 1399 : s.price;
+      bData.servicePrice = s.price;
       bData.adhesiveSource = '';
       bData.adhesiveSourceName = '';
       transitionTo(2);
     };
-
     el.appendChild(card);
   });
 }
@@ -620,120 +544,64 @@ function calNext() {
 }
 
 function renderCalendar() {
-
-  document.getElementById('calMonthLabel').textContent =
-    AR_MONTHS[calMonth] + ' ' + calYear;
-
+  document.getElementById('calMonthLabel').textContent = AR_MONTHS[calMonth] + ' ' + calYear;
   var grid = document.getElementById('calGrid');
   grid.innerHTML = '';
 
-  var today = new Date();
-  today.setHours(0, 0, 0, 0);
-
+  var today = new Date(); today.setHours(0, 0, 0, 0);
   var firstDay = new Date(calYear, calMonth, 1);
   var startDow = firstDay.getDay();
   var offset = (startDow + 1) % 7;
   var daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
 
-  // 🚫 الأيام المغلقة
-  var blockedDates = [
-    '2026-05-27',
-    '2026-05-28',
-    '2026-05-29',
-    '2026-05-30'
-  ];
-
-  // الفراغات قبل أول يوم
   for (var e = 0; e < offset; e++) {
-
     var empty = document.createElement('div');
     empty.style.height = '46px';
-
     grid.appendChild(empty);
   }
 
-  // الأيام
   for (var d = 1; d <= daysInMonth; d++) {
-
     var date = new Date(calYear, calMonth, d);
     var dow = date.getDay();
-
     var isPast = date < today;
     var isFriday = dow === 5;
     var isToday = date.getTime() === today.getTime();
-
-    var dateStr =
-      calYear + '-' +
-      String(calMonth + 1).padStart(2, '0') + '-' +
-      String(d).padStart(2, '0');
-
+    var dateStr = calYear + '-' + String(calMonth + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0');
     var isSelected = bData.day === dateStr;
-
-    // 🚫 هل اليوم مقفول
-    var isBlocked = blockedDates.includes(dateStr);
-
-    var disabled =
-      isPast ||
-      isFriday ||
-      isBlocked;
+    var disabled = isPast || isFriday;
 
     var cell = document.createElement('div');
     cell.className = 'cal-cell';
 
     if (isSelected) {
-
       cell.classList.add('selected');
-
     } else if (isToday && !disabled) {
-
       cell.classList.add('today', 'clickable');
-
     } else if (disabled) {
-
       cell.classList.add('past');
-
     } else {
-
       cell.classList.add('normal', 'clickable');
     }
 
     cell.textContent = d;
 
-    // الضغط على اليوم
     if (!disabled && !isSelected) {
-
       (function(dateStr, d, dow) {
-
         cell.onclick = function() {
-
           var dayName = AR_DAYS_FULL[dow];
-
           bData.day = dateStr;
-
-          bData.dayLabel =
-            dayName + ' ' +
-            d + ' ' +
-            AR_MONTHS[calMonth] + ' ' +
-            calYear;
-
+          bData.dayLabel = dayName + ' ' + d + ' ' + AR_MONTHS[calMonth] + ' ' + calYear;
           bData.time = '';
-
           renderCalendar();
-
-          setTimeout(function() {
-
-            transitionTo(3);
-
-          }, 300);
-
+          setTimeout(function() { transitionTo(3); }, 300);
         };
-
       })(dateStr, d, dow);
     }
 
     grid.appendChild(cell);
   }
 }
+
 async function renderTimes() {
   var g = document.getElementById('timeGrid');
   g.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--dim)">جاري تحميل الأوقات...</div>';
