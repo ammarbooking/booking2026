@@ -426,11 +426,14 @@ async function upsertCustomerFromBooking(payload) {
 
 
 async function getBookedTimes(date) {
-  if (!date) return [];
+  if (!date || !bData.branch) return [];
 
   try {
-    // عرض المواعيد المحجوزة للفرع المختار فقط، حتى لا تختلط الرياض بالدمام
-    const url = `${SUPABASE_URL}/rest/v1/bookings?select=booking_time,status&booking_date=eq.${date}&branch=eq.${encodeURIComponent(bData.branch)}`;
+    // الموعد محجوز فقط إذا تطابق: التاريخ + الفرع.
+    // لذلك نفس الساعة يمكن حجزها في الرياض والدمام بشكل مستقل.
+    const selectedBranch = String(bData.branch).trim().toLowerCase();
+    const selectedDate = String(date).trim();
+    const url = `${SUPABASE_URL}/rest/v1/bookings?select=booking_time,status,branch,booking_date&booking_date=eq.${encodeURIComponent(selectedDate)}&branch=eq.${encodeURIComponent(selectedBranch)}`;
     const res = await fetch(url, {
       method: "GET",
       headers: supaHeaders()
@@ -446,7 +449,10 @@ async function getBookedTimes(date) {
 
     return data
       .filter(function(row) {
-        return !row.status || row.status !== 'cancelled';
+        const rowBranch = String(row.branch || '').trim().toLowerCase();
+        const rowDate = String(row.booking_date || '').trim();
+        const active = !row.status || String(row.status).toLowerCase() !== 'cancelled';
+        return active && rowBranch === selectedBranch && rowDate === selectedDate;
       })
       .map(function(row) {
         return String(row.booking_time || '').trim();
@@ -806,7 +812,7 @@ async function confirmBooking() {
       customer_name: bData.name,
       customer_phone: bData.phone,
       adhesive_source: bData.adhesiveSourceName || null,
-      branch: bData.branch,
+      branch: String(bData.branch).trim().toLowerCase(),
       service: bData.serviceName,
       price: Number(bData.servicePrice),
       booking_date: bData.day,
