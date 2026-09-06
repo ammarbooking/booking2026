@@ -429,7 +429,8 @@ async function getBookedTimes(date) {
   if (!date) return [];
 
   try {
-    const url = `${SUPABASE_URL}/rest/v1/bookings?select=booking_time,status&booking_date=eq.${date}`;
+    // عرض المواعيد المحجوزة للفرع المختار فقط، حتى لا تختلط الرياض بالدمام
+    const url = `${SUPABASE_URL}/rest/v1/bookings?select=booking_time,status&booking_date=eq.${date}&branch=eq.${encodeURIComponent(bData.branch)}`;
     const res = await fetch(url, {
       method: "GET",
       headers: supaHeaders()
