@@ -317,7 +317,8 @@ var now = new Date(); calYear = now.getFullYear(); calMonth = now.getMonth();
 
 var BRANCHES_DATA = [
   { id:'riyadh', name:'الرياض' },
-  { id:'dammam', name:'الدمام' }
+  { id:'dammam', name:'الدمام' },
+  { id:'track-riyadh', name:'تراك الرياض' }
 ];
 var SERVICES_DATA = [
   { id:'install', name:'تركيب شعر', price:1396, icon:'✦' },
@@ -426,14 +427,11 @@ async function upsertCustomerFromBooking(payload) {
 
 
 async function getBookedTimes(date) {
-  if (!date || !bData.branch) return [];
+  if (!date) return [];
 
   try {
-    // الموعد محجوز فقط إذا تطابق: التاريخ + الفرع.
-    // لذلك نفس الساعة يمكن حجزها في الرياض والدمام بشكل مستقل.
-    const selectedBranch = String(bData.branch).trim().toLowerCase();
-    const selectedDate = String(date).trim();
-    const url = `${SUPABASE_URL}/rest/v1/bookings?select=booking_time,status,branch,booking_date&booking_date=eq.${encodeURIComponent(selectedDate)}&branch=eq.${encodeURIComponent(selectedBranch)}`;
+    // عرض المواعيد المحجوزة للفرع المختار فقط، حتى لا تختلط الرياض بالدمام
+    const url = `${SUPABASE_URL}/rest/v1/bookings?select=booking_time,status&booking_date=eq.${date}&branch=eq.${encodeURIComponent(bData.branch)}`;
     const res = await fetch(url, {
       method: "GET",
       headers: supaHeaders()
@@ -449,10 +447,7 @@ async function getBookedTimes(date) {
 
     return data
       .filter(function(row) {
-        const rowBranch = String(row.branch || '').trim().toLowerCase();
-        const rowDate = String(row.booking_date || '').trim();
-        const active = !row.status || String(row.status).toLowerCase() !== 'cancelled';
-        return active && rowBranch === selectedBranch && rowDate === selectedDate;
+        return !row.status || row.status !== 'cancelled';
       })
       .map(function(row) {
         return String(row.booking_time || '').trim();
@@ -812,7 +807,7 @@ async function confirmBooking() {
       customer_name: bData.name,
       customer_phone: bData.phone,
       adhesive_source: bData.adhesiveSourceName || null,
-      branch: String(bData.branch).trim().toLowerCase(),
+      branch: bData.branch,
       service: bData.serviceName,
       price: Number(bData.servicePrice),
       booking_date: bData.day,
